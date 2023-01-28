@@ -1,0 +1,8 @@
+{
+     "callback": "https://nostryfied.online/api/v1/lnurl/payreq/Official",
+     "maxSendable": 100000000000,
+     "minSendable": 50,
+     "metadata": "[[\"text/plain\",\"Pay to Wallet of Satoshi user: coolstudy34\"],[\"text/identifier\",\"coolstudy34@walletofsatoshi.com\"]]",
+     "commentAllowed": 32,
+     "tag": "payRequest"
+ }
