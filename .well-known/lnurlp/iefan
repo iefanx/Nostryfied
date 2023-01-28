@@ -1,4 +1,4 @@
-{"callback":"https://nostryfied.online/api/v1/lnurl/payreq/iefan",
+{"callback":"https://nostryfied.online/.well-known/lnurlp/iefan",
 "maxSendable":100000000000,
 "minSendable":100,
 "metadata":"[[\"text/plain\",\"Thanks for your generous donation: iefan\"],
