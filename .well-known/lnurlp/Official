@@ -1,4 +1,4 @@
-{"callback":"https://nostryfied.online/.well-known/lnurl/payreq/Official",
+{"callback":"https://nostryfied.online/.well-known/lnurlp/Official",
 "maxSendable":100000000000,
 "minSendable":50,
 "metadata":"[[\"text/plain\",\"Thanks for your generous donation: Nostryfied\"],
