@@ -1,0 +1,293 @@
+@import url('https://fonts.googleapis.com/css2?family=Red+Hat+Text:wght@400;700&display=swap');
+
+:root{
+--color: #333; 
+}
+
+body {
+  font-family: 'Red Hat Text', sans-serif;
+}
+
+.container {
+  text-align: center;
+  color: var(--color);
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-image: url(https://images.unsplash.com/photo-1519120944692-1a8d8cfc107f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=872&q=80);
+  background-size: cover;
+  background-position: center;
+  
+/*  this is where the magic happens:  */
+  background-attachment: fixed;
+}
+
+h1 {font-family: "Open Sans", sans-serif;
+  line-height: 1.5;
+  font-weight: 700;
+  font-size: 2rem;
+
+}
+.header-space {
+  display: flex;
+  justify-content: center;
+  margin-top: 9px;
+  font-family: "Courier", monospace;
+}
+
+.box {
+  background-color: #f2f2f2;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+
+progress {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 10px;
+  background-color: #eee;
+  border-radius: 10px;
+  overflow: hidden;
+}
+progress::-webkit-progress-bar {
+  background-color: #eee;
+  border-radius: 10px;
+}
+progress::-webkit-progress-value {
+  background-color: #007bff;
+  border-radius: 10px;
+  animation: loading 2s ease-out infinite;
+}
+@keyframes loading {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+
+progress {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 10px;
+  background-color: #eee;
+  border-radius: 10px;
+  overflow: hidden;
+}
+progress::-webkit-progress-bar {
+  background-color: #eee;
+  border-radius: 10px;
+}
+progress::-webkit-progress-value {
+  background-color: #007bff;
+  border-radius: 10px;
+}
+progress[value="25"]::-webkit-progress-value {
+  background-color: #ffc107;
+}
+progress[value="50"]::-webkit-progress-value {
+  background-color: #28a745;
+}
+progress[value="75"]::-webkit-progress-value {
+  background-color: #dc3545;
+}
+
+
+p {
+  max-width: 52ch;
+  line-height: 1.5;
+  padding: .3em;
+  margin-top: 5px;
+  margin: 0;
+}
+
+
+
+
+a {
+  display: inline-block;
+  padding: .5em 1.5em;
+  background-color: var(--color);
+  color: white;
+  text-decoration: none;
+  text-transform: uppercase;
+  border-radius: 0.3em;
+  font-weight: 700;
+  letter-spacing: .5px;
+  font-size: .875rem;
+}
+
+.blank,
+.other {
+  width: 100%;
+  min-height: 60vh;
+  background-color: var(--color);
+}
+
+.second {
+  background-image:url(https://images.unsplash.com/photo-1514496959998-c01c40915c5f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1740&q=80);
+  background-attachment: fixed;
+  height: 1200px;
+}
+
+.second {
+  background-image:url(https://images.unsplash.com/photo-1514496959998-c01c40915c5f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1740&q=80);
+  background-attachment: fixed;
+  height: 1200px;
+}
+
+.space-between {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+h2 {
+  font-family: "Open Sans", sans-serif;
+  font-size: 1em;
+  line-height: 1.5;
+  font-weight: 500; /* Set font-weight to lighter */
+  margin-bottom: 5px;
+  width: 50%; /* set the width of h2 element to 50% of its parent's width */
+  margin: 10 auto; /* set the top and bottom margin to 0, and left and right margin to auto */
+  word-wrap: break-word;
+  padding: 25px;
+}
+
+@media screen and (max-width: 1080px) { /* apply this style only when the screen width is less than or equal to 600px */
+  h2 {
+    width: 70%; /* set the width of h2 element to 100% of its parent's width */
+    margin: 0; /* set all margins to 0 */
+  }
+}
+
+@media screen and (max-width: 800px) { /* apply this style only when the screen width is less than or equal to 600px */
+  h2 {
+    width: 90%; /* set the width of h2 element to 100% of its parent's width */
+    margin: 0; /* set all margins to 0 */
+  }
+}
+
+@media screen and (max-width: 600px) { /* apply this style only when the screen width is less than or equal to 600px */
+  h2 {
+    width: 90%; /* set the width of h2 element to 100% of its parent's width */
+    margin: 0; /* set all margins to 0 */
+  }
+}
+
+#pubkey {
+  width: 700px !important;
+}
+
+@media screen and (max-width: 1080px) {
+  #pubkey {
+    width: 550px !important;
+  }
+}
+@media screen and (max-width: 800px) {
+  #pubkey {
+    width: 450px !important;
+  }
+}
+@media screen and (max-width: 600px) {
+  #pubkey {
+    width: 300px !important;
+  }
+}
+
+
+
+
+
+main div p img {
+  position: relative;
+  top: 6px;
+  height: 1rem;
+  margin-left: 0.5rem;
+}
+
+details {
+  background-color: rgba(242, 241, 238, 0.3);
+  border: 1px solid #ccc;
+  padding: 0.5rem;
+  margin: 1rem 0;
+}
+
+p,
+li {
+  line-height: 1.33;
+  margin-bottom: 1rem;
+}
+
+ul {
+  margin-left: -1rem;
+}
+
+.box {
+  border: 1px solid #ccc;
+  padding: 0 0.5rem;
+  margin: 1rem 0;
+}
+
+.box-content {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+  font-family: "Courier", monospace;
+}
+
+button {
+  appearance: none;
+  background-color: #087bee;
+  border: 1px solid rgba(27, 31, 35, 0.15);
+  border-radius: 6px;
+  box-shadow: rgba(27, 31, 35, 0.04) 0 1px 0, rgba(255, 255, 255, 0.25) 0 1px 0 inset;
+  box-sizing: border-box;
+  color: #f9fafb;
+  cursor: pointer;
+  display: inline-block;
+  font-family: -apple-system, system-ui, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  list-style: none;
+  padding: 6px 16px;
+  position: relative;
+  transition: background-color 0.2s cubic-bezier(0.3, 0, 0.5, 1);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  vertical-align: middle;
+  white-space: nowrap;
+  word-wrap: break-word;
+}
+
+
+
+.gray {
+  background-color: rgba(183, 177, 168, 0.3);
+}
+
+.red {
+  background-color: rgba(229, 60, 8, 0.3);
+}
+
+.box button {
+  background-color: rgba(0, 0, 0, 0.813);
+  color: rgb(255, 255, 255);
+}
+
+footer p {
+  font-size: 0.8rem;
+  margin: 0;
+  text-align: center;
+}
+
+
