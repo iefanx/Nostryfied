@@ -171,14 +171,14 @@ h2 {
 
 @media screen and (max-width: 800px) { /* apply this style only when the screen width is less than or equal to 600px */
   h2 {
-    width: 90%; /* set the width of h2 element to 100% of its parent's width */
+    width: 95%; /* set the width of h2 element to 100% of its parent's width */
     margin: 0; /* set all margins to 0 */
   }
 }
 
 @media screen and (max-width: 600px) { /* apply this style only when the screen width is less than or equal to 600px */
   h2 {
-    width: 90%; /* set the width of h2 element to 100% of its parent's width */
+    width: 95%; /* set the width of h2 element to 100% of its parent's width */
     margin: 0; /* set all margins to 0 */
   }
 }
@@ -194,12 +194,12 @@ h2 {
 }
 @media screen and (max-width: 800px) {
   #pubkey {
-    width: 300px !important;
+    width: 400px !important;
   }
 }
 @media screen and (max-width: 600px) {
   #pubkey {
-    width: 200px !important;
+    width: 350px !important;
   }
 }
 
