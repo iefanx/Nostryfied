@@ -189,17 +189,17 @@ h2 {
 
 @media screen and (max-width: 1080px) {
   #pubkey {
-    width: 500px !important;
+    width: 450px !important;
   }
 }
 @media screen and (max-width: 800px) {
   #pubkey {
-    width: 400px !important;
+    width: 350px !important;
   }
 }
 @media screen and (max-width: 600px) {
   #pubkey {
-    width: 350px !important;
+    width: 250px !important;
   }
 }
 
