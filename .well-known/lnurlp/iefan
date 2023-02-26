@@ -1,8 +1,0 @@
-{
-  "callback": "https://livingroomofsatoshi.com/api/v1/lnurl/payreq/731d7887-b2a0-45ff-9741-41a814a82a4b",
-  "maxSendable": 100000000000,
-  "minSendable": 100,
-  "metadata": "[[\"text/plain\",\"Thanks for your generous donation: iefan\"],[\"text/identifier\",\"cooleststudy34@walletofsatoshi.com\"]]",
-  "commentAllowed": 32,
-  "tag": "payRequest"
-}
