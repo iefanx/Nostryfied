@@ -36,7 +36,7 @@ const fetchAndBroadcast = async () => {
   // inform user fetching is done
   $('#fetching-status').html(txt.fetching + checkMark)
   clearInterval(fetchInterval)
-  $('#fetching-progress').val(20)
+  $('#fetching-progress').val(300)
   // inform user that backup file (js format) is being downloaded
   $('#file-download').html(txt.download)
   downloadFile(data, 'nostr-backup.js')
@@ -53,7 +53,7 @@ const fetchAndBroadcast = async () => {
   // inform user that broadcasting is done
   $('#broadcasting-status').html(txt.broadcasting + checkMark)
   clearInterval(broadcastInterval)
-  $('#broadcasting-progress').val(20)
+  $('#broadcasting-progress').val(300)
   // re-enable broadcast button
   $('#fetch-and-broadcast').prop('disabled', false)
 }
