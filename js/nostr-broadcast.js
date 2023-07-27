@@ -31,8 +31,8 @@ const fetchAndBroadcast = async () => {
     $('#fetching-progress').val(currValue + 1)
   }, 1000)
   // get all events from relays
-  const filter = { authors: [pubkey] }
-  const data = await getEvents(filter)
+  const filters =[{ authors: [pubkey] }, { "#p": [pubkey] }] 
+  const data = await getEvents(filters)
   // inform user fetching is done
   $('#fetching-status').html(txt.fetching + checkMark)
   clearInterval(fetchInterval)
