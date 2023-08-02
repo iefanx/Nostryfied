@@ -51,10 +51,16 @@ function hexToBytes(hex) {
   const fetchFromRelay = async (relay, filters, events) =>
     new Promise((resolve, reject) => {
       try {
-        // prevent hanging forever
-        setTimeout(() => reject('timeout'), 300_000)
+
         // open websocket
         const ws = new WebSocket(relay)
+
+        // prevent hanging forever
+        setTimeout(() => {
+          ws.close()
+          reject('timeout')
+        }, 300_000)
+
         // subscription id
         const subsId = 'my-sub'
         // subscribe to events filtered by author
@@ -75,10 +81,24 @@ function hexToBytes(hex) {
             $('#events-found').text(`${Object.keys(events).length} events found`)
           }
           // end of subscription messages
-          if (msgType === 'EOSE' && subscriptionId === subsId) resolve()
+          if (msgType === 'EOSE' && subscriptionId === subsId) {
+            ws.close()
+            resolve()
+          }
         }
-        ws.onerror = (err) => reject(err)
+        ws.onerror = (err) => {
+          ws.close()
+          reject(err)
+        }
+        ws.onclose = (socket, event) => {
+          resolve()
+        }
       } catch (exception) {
+        try {
+          ws.close()
+        } catch (exception) {
+        }
+        
         reject(exception)
       }
     })
@@ -99,18 +119,27 @@ function hexToBytes(hex) {
   const sendToRelay = async (relay, data) =>
     new Promise((resolve, reject) => {
       try {
-        // prevent hanging forever
-        setTimeout(() => reject('timeout'), 20_000)
         const ws = new WebSocket(relay)
+
+        // prevent hanging forever
+        setTimeout(() => {
+          ws.close()
+          reject('timeout')
+        }, 300_000)
+
         // fetch events from relay
         ws.onopen = () => {
+          console.log("sending ", data.length, "events to ", relay)
           for (evnt of data) {
             ws.send(JSON.stringify(['EVENT', evnt]))
           }
           ws.close()
           resolve(`done for ${relay}`)
         }
-        ws.onerror = (err) => reject(err)
+        ws.onerror = (err) => {
+          console.log("Error", err)
+          reject(err)
+        }
       } catch (exception) {
         reject(exception)
       }
