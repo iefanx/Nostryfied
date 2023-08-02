@@ -10,6 +10,7 @@ const fixedRelays = [
   'wss://expensive-relay.fiatjaf.com',
   'wss://freedom-relay.herokuapp.com',
   'wss://nos.lol',
+  'wss://a.nos.lol',
   'wss://nostr-2.zebedee.cloud',
   'wss://nostr-pub.wellorder.net',
   'wss://nostr-relay.alekberg.net',
