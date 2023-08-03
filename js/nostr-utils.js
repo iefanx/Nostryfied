@@ -47,10 +47,26 @@ function hexToBytes(hex) {
     tempLink.click()
   }
 
-  const updateRelayStatus = (relayStatus) => {
-    if (Object.keys(relayStatus).length > 0) {
-      let newText = Object.keys(relayStatus).map(
-        it => it.replace("wss://", "").replace("ws://", "") + ": " + relayStatus[it]
+  const updateRelayStatus = (relay, status, addToCount, relayStatusAndCount) => {
+    if (relayStatusAndCount[relay] == undefined) {
+      relayStatusAndCount[relay] = {}
+    }
+
+    if (status)
+      relayStatusAndCount[relay].status = status
+
+    if (relayStatusAndCount[relay].count != undefined) 
+      relayStatusAndCount[relay].count = relayStatusAndCount[relay].count + addToCount
+    else 
+      relayStatusAndCount[relay].count = addToCount
+
+    displayRelayStatus(relayStatusAndCount)
+  }
+
+  const displayRelayStatus = (relayStatusAndCount) => {
+    if (Object.keys(relayStatusAndCount).length > 0) {
+      let newText = Object.keys(relayStatusAndCount).map(
+        it => it.replace("wss://", "").replace("ws://", "") + ": " + relayStatusAndCount[it].status + " (" + relayStatusAndCount[it].count + ")"
       ).join("<br />")
       $('#checking-relays').html(newText)
     } else {
@@ -63,8 +79,7 @@ function hexToBytes(hex) {
   const fetchFromRelay = async (relay, filters, pubkey, events, relayStatus) =>
     new Promise((resolve, reject) => {
       try {
-        relayStatus[relay] = "Starting"
-        updateRelayStatus(relayStatus)
+        updateRelayStatus(relay, "Starting", 0, relayStatus)
         // open websocket
         const ws = new WebSocket(relay)
 
@@ -84,8 +99,7 @@ function hexToBytes(hex) {
             ws.close()
             reject('timeout')
           }, 10_000)
-          relayStatus[relay] = "Downloading"
-          updateRelayStatus(relayStatus)
+          updateRelayStatus(relay, "Downloading", 0, relayStatus)
           ws.send(JSON.stringify(['REQ', subsId].concat(filters)))
         }
   
@@ -108,35 +122,34 @@ function hexToBytes(hex) {
               return
             }
 
+            updateRelayStatus(relay, undefined, 1, relayStatus)
+
             // prevent duplicated events
             if (events[id]) return
             else events[id] = data
+
             // show how many events were found until this moment
             $('#events-found').text(`${Object.keys(events).length} events found`)
           }
           // end of subscription messages
           if (msgType === 'EOSE' && subscriptionId === subsId) {
-            relayStatus[relay] = "Done"
-            updateRelayStatus(relayStatus)
+            updateRelayStatus(relay, "Done", 0, relayStatus)
             ws.close()
             resolve()
           }
         }
         ws.onerror = (err) => {
-          relayStatus[relay] = "Done"
-          updateRelayStatus(relayStatus)
+          updateRelayStatus(relay, "Done", 0, relayStatus)
           ws.close()
           reject(err)
         }
         ws.onclose = (socket, event) => {
-          relayStatus[relay] = "Done"
-          updateRelayStatus(relayStatus)
+          updateRelayStatus(relay, "Done", 0, relayStatus)
           resolve()
         }
       } catch (exception) {
         console.log(exception)
-        relayStatus[relay] = "Error"
-        updateRelayStatus(relayStatus)
+        updateRelayStatus(relay, "Error", 0, relayStatus)
         try {
           ws.close()
         } catch (exception) {
@@ -159,7 +172,7 @@ function hexToBytes(hex) {
       $('#fetching-progress').val(relays.length - fetchFunctions.length)
       await Promise.allSettled( relaysForThisRound.map((relay) => fetchFromRelay(relay, filters, pubkey, events, relayStatus)) )
     }
-    updateRelayStatus({})
+    displayRelayStatus({})
 
     // return data as an array of events
     return Object.keys(events).map((id) => events[id])
@@ -171,8 +184,7 @@ function hexToBytes(hex) {
       try {
         const ws = new WebSocket(relay)
 
-        relayStatus[relay] = "Starting"
-        updateRelayStatus(relayStatus)
+        updateRelayStatus(relay, "Starting", 0, relayStatus)
 
         // prevent hanging forever
         let myTimeout = setTimeout(() => {
@@ -182,37 +194,49 @@ function hexToBytes(hex) {
 
         // fetch events from relay
         ws.onopen = () => {
-          relayStatus[relay] = "Sending"
-          updateRelayStatus(relayStatus)
+          updateRelayStatus(relay, "Sending", 0, relayStatus)
           for (evnt of data) {
             clearTimeout(myTimeout)
             myTimeout = setTimeout(() => {
               ws.close()
               reject('timeout')
-            }, 5_000)
+            }, 10_000)
 
             ws.send(JSON.stringify(['EVENT', evnt]))
           }
-          relayStatus[relay] = "Done"
-          updateRelayStatus(relayStatus)
-          ws.close()
-          resolve(`done for ${relay}`)
+        }
+        // Listen for messages
+        ws.onmessage = (event) => {
+          clearTimeout(myTimeout)
+          myTimeout = setTimeout(() => {
+            ws.close()
+            reject('timeout')
+          }, 10_000)
+
+          const [msgType, subscriptionId, inserted] = JSON.parse(event.data)
+          // event messages
+          // end of subscription messages
+          if (msgType === 'OK') {
+            if (inserted == true) {
+              updateRelayStatus(relay, undefined, 1, relayStatus)
+            } else {
+              console.log(event.data)
+            }
+          }
         }
         ws.onerror = (err) => {
-          relayStatus[relay] = "Error"
-          updateRelayStatus(relayStatus)
+          updateRelayStatus(relay, "Error", 0, relayStatus)
           console.log("Error", err)
           ws.close()
           reject(err)
         }
         ws.onclose = (socket, event) => {
-          relayStatus[relay] = "Done"
-          updateRelayStatus(relayStatus)
+          updateRelayStatus(relay, "Done", 0, relayStatus)
           resolve()
         }
       } catch (exception) {
-        relayStatus[relay] = "Error"
-        updateRelayStatus(relayStatus)
+        console.log(exception)
+        updateRelayStatus(relay, "Error", 0, relayStatus)
         try {
           ws.close()
         } catch (exception) {
@@ -232,5 +256,5 @@ function hexToBytes(hex) {
       await Promise.allSettled( relaysForThisRound.map((relay) => sendToRelay(relay, data, relayStatus)) )
     }
 
-    updateRelayStatus(relayStatus)
+    displayRelayStatus(relayStatus)
   }

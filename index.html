@@ -50,7 +50,7 @@
         <form>
           <div>
             <form>
-              <div class="space-between">
+              <div class="space-between-small">
                 <p>
                   <input
                     type="text"
@@ -61,6 +61,28 @@
                     style="width: 180px"
                     required />
                 </p>
+              </div>
+              <div class="space-between-small">
+                <div class="space-between">
+                  <b>OR</b>
+                </div>
+              </div>
+              <div class="space-between">
+                <div class="space-between">
+                  <p>
+                    <input type="file" id="file-selector">
+                  </p>
+                  <script>
+                    var fileName = ""
+      
+                    const fileSelector = document.getElementById('file-selector');
+                    fileSelector.addEventListener('change', (event) => {
+                      fileName = event.target.files[0];
+                      $('#fetch-and-broadcast').css('display', 'none')
+                      $('#just-broadcast').css('display', 'inline-block')
+                    });
+                  </script>
+                </div>
               </div>
             </form>
           </div>
@@ -82,12 +104,18 @@
               color: #999;
             }
             </style>
-            
+        
             <p>
               <button
                 id="fetch-and-broadcast"
                 onclick="fetchAndBroadcast(); return false;">
                 Backup & Broadcast
+              </button>
+              <button
+                id="just-broadcast"
+                onclick="justBroadcast(fileName); return false;" 
+                style="display: none">
+                Broadcast from File
               </button>
               <button
                 id="get-from-extension"
