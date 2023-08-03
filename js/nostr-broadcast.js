@@ -34,7 +34,11 @@ const fetchAndBroadcast = async () => {
 
   // get all events from relays
   const filters =[{ authors: [pubkey] }, { "#p": [pubkey] }] 
-  const data = await getEvents(filters)
+  const data = await getEvents(filters, pubkey)
+
+  const kind3 = data.filter((it) => it.kind == 3 && it.pubkey === pubkey).sort((a, b) => b.created_at - a.created_at)[0]  
+  const myRelaySet = JSON.parse(kind3.content)
+  relays = Object.keys(myRelaySet).filter(url => myRelaySet[url].write).map(url => url)
 
   $('#checking-relays-header-box').css('display', 'none')
   $('#checking-relays-box').css('display', 'none')
@@ -53,12 +57,10 @@ const fetchAndBroadcast = async () => {
   
   $('#checking-relays-header-box').css('display', 'flex')
   $('#checking-relays-box').css('display', 'flex')
-  $('#checking-relays-header').text("Waiting for Relays:")
+  $('#checking-relays-header').text("Broadcasting to Relays:")
 
   await broadcastEvents(data)
 
-  $('#checking-relays-header-box').css('display', 'none')
-  $('#checking-relays-box').css('display', 'none')
   // inform user that broadcasting is done
   $('#broadcasting-status').html(txt.broadcasting + checkMark)
   $('#broadcasting-progress').val(relays.length)

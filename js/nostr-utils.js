@@ -60,7 +60,7 @@ function hexToBytes(hex) {
   }
 
   // fetch events from relay, returns a promise
-  const fetchFromRelay = async (relay, filters, events, relayStatus) =>
+  const fetchFromRelay = async (relay, filters, pubkey, events, relayStatus) =>
     new Promise((resolve, reject) => {
       try {
         relayStatus[relay] = "Starting"
@@ -101,6 +101,13 @@ function hexToBytes(hex) {
             }, 5_000)
 
             const { id } = data
+
+            // don't save/reboradcast kind 3s that are not from the author. 
+            // their are too big. 
+            if (data.kind == 3 && data.pubkey != pubkey) {
+              return
+            }
+
             // prevent duplicated events
             if (events[id]) return
             else events[id] = data
@@ -140,7 +147,7 @@ function hexToBytes(hex) {
     })
   
   // query relays for events published by this pubkey
-  const getEvents = async (filters) => {
+  const getEvents = async (filters, pubkey) => {
     // events hash
     const events = {}
 
@@ -150,7 +157,7 @@ function hexToBytes(hex) {
       let relaysForThisRound = fetchFunctions.splice(0, 10)
       let relayStatus = {}
       $('#fetching-progress').val(relays.length - fetchFunctions.length)
-      await Promise.allSettled( relaysForThisRound.map((relay) => fetchFromRelay(relay, filters, events, relayStatus)) )
+      await Promise.allSettled( relaysForThisRound.map((relay) => fetchFromRelay(relay, filters, pubkey, events, relayStatus)) )
     }
     updateRelayStatus({})
 
@@ -183,7 +190,7 @@ function hexToBytes(hex) {
               ws.close()
               reject('timeout')
             }, 5_000)
-            
+
             ws.send(JSON.stringify(['EVENT', evnt]))
           }
           relayStatus[relay] = "Done"
@@ -218,12 +225,12 @@ function hexToBytes(hex) {
   const broadcastEvents = async (data) => {
     // batch processing of 10 relays
     let broadcastFunctions = [...relays]
+    let relayStatus = {}
     while (broadcastFunctions.length) {
       let relaysForThisRound = broadcastFunctions.splice(0, 10)
-      let relayStatus = {}
       $('#broadcasting-progress').val(relays.length - broadcastFunctions.length)
       await Promise.allSettled( relaysForThisRound.map((relay) => sendToRelay(relay, data, relayStatus)) )
     }
 
-    updateRelayStatus({})
+    updateRelayStatus(relayStatus)
   }
