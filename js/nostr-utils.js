@@ -46,25 +46,46 @@ function hexToBytes(hex) {
     tempLink.setAttribute('download', fileName)
     tempLink.click()
   }
-  
+
+  const updateRelayStatus = (relayStatus) => {
+    if (Object.keys(relayStatus).length > 0) {
+      let newText = Object.keys(relayStatus).map(
+        it => it.replace("wss://", "").replace("ws://", "") + ": " + relayStatus[it]
+      ).join("<br />")
+      $('#checking-relays').html(newText)
+    } else {
+      $('#checking-relays-header').html("")
+      $('#checking-relays').html("")
+    }
+  }
+
   // fetch events from relay, returns a promise
-  const fetchFromRelay = async (relay, filters, events) =>
+  const fetchFromRelay = async (relay, filters, events, relayStatus) =>
     new Promise((resolve, reject) => {
       try {
-
+        relayStatus[relay] = "Starting"
+        updateRelayStatus(relayStatus)
         // open websocket
         const ws = new WebSocket(relay)
 
         // prevent hanging forever
-        setTimeout(() => {
+        let myTimeout = setTimeout(() => {
           ws.close()
           reject('timeout')
-        }, 300_000)
+        }, 10_000)
+
 
         // subscription id
         const subsId = 'my-sub'
         // subscribe to events filtered by author
         ws.onopen = () => {
+          clearTimeout(myTimeout)
+          myTimeout = setTimeout(() => {
+            ws.close()
+            reject('timeout')
+          }, 10_000)
+          relayStatus[relay] = "Downloading"
+          updateRelayStatus(relayStatus)
           ws.send(JSON.stringify(['REQ', subsId].concat(filters)))
         }
   
@@ -73,6 +94,12 @@ function hexToBytes(hex) {
           const [msgType, subscriptionId, data] = JSON.parse(event.data)
           // event messages
           if (msgType === 'EVENT' && subscriptionId === subsId) {
+            clearTimeout(myTimeout)
+            myTimeout = setTimeout(() => {
+              ws.close()
+              reject('timeout')
+            }, 5_000)
+
             const { id } = data
             // prevent duplicated events
             if (events[id]) return
@@ -82,18 +109,27 @@ function hexToBytes(hex) {
           }
           // end of subscription messages
           if (msgType === 'EOSE' && subscriptionId === subsId) {
+            relayStatus[relay] = "Done"
+            updateRelayStatus(relayStatus)
             ws.close()
             resolve()
           }
         }
         ws.onerror = (err) => {
+          relayStatus[relay] = "Done"
+          updateRelayStatus(relayStatus)
           ws.close()
           reject(err)
         }
         ws.onclose = (socket, event) => {
+          relayStatus[relay] = "Done"
+          updateRelayStatus(relayStatus)
           resolve()
         }
       } catch (exception) {
+        console.log(exception)
+        relayStatus[relay] = "Error"
+        updateRelayStatus(relayStatus)
         try {
           ws.close()
         } catch (exception) {
@@ -107,45 +143,87 @@ function hexToBytes(hex) {
   const getEvents = async (filters) => {
     // events hash
     const events = {}
-    // wait for all relays to finish
-    await Promise.allSettled(
-      relays.map((relay) => fetchFromRelay(relay, filters, events))
-    )
+
+    // batch processing of 10 relays
+    let fetchFunctions = [...relays]
+    while (fetchFunctions.length) {
+      let relaysForThisRound = fetchFunctions.splice(0, 10)
+      let relayStatus = {}
+      $('#fetching-progress').val(relays.length - fetchFunctions.length)
+      await Promise.allSettled( relaysForThisRound.map((relay) => fetchFromRelay(relay, filters, events, relayStatus)) )
+    }
+    updateRelayStatus({})
+
     // return data as an array of events
     return Object.keys(events).map((id) => events[id])
   }
   
   // send events to a relay, returns a promisse
-  const sendToRelay = async (relay, data) =>
+  const sendToRelay = async (relay, data, relayStatus) =>
     new Promise((resolve, reject) => {
       try {
         const ws = new WebSocket(relay)
 
+        relayStatus[relay] = "Starting"
+        updateRelayStatus(relayStatus)
+
         // prevent hanging forever
-        setTimeout(() => {
+        let myTimeout = setTimeout(() => {
           ws.close()
           reject('timeout')
-        }, 300_000)
+        }, 10_000)
 
         // fetch events from relay
         ws.onopen = () => {
-          console.log("sending ", data.length, "events to ", relay)
+          relayStatus[relay] = "Sending"
+          updateRelayStatus(relayStatus)
           for (evnt of data) {
+            clearTimeout(myTimeout)
+            myTimeout = setTimeout(() => {
+              ws.close()
+              reject('timeout')
+            }, 5_000)
+            
             ws.send(JSON.stringify(['EVENT', evnt]))
           }
+          relayStatus[relay] = "Done"
+          updateRelayStatus(relayStatus)
           ws.close()
           resolve(`done for ${relay}`)
         }
         ws.onerror = (err) => {
+          relayStatus[relay] = "Error"
+          updateRelayStatus(relayStatus)
           console.log("Error", err)
+          ws.close()
           reject(err)
         }
+        ws.onclose = (socket, event) => {
+          relayStatus[relay] = "Done"
+          updateRelayStatus(relayStatus)
+          resolve()
+        }
       } catch (exception) {
+        relayStatus[relay] = "Error"
+        updateRelayStatus(relayStatus)
+        try {
+          ws.close()
+        } catch (exception) {
+        }
         reject(exception)
       }
     })
   
   // broadcast events to list of relays
   const broadcastEvents = async (data) => {
-    await Promise.allSettled(relays.map((relay) => sendToRelay(relay, data)))
+    // batch processing of 10 relays
+    let broadcastFunctions = [...relays]
+    while (broadcastFunctions.length) {
+      let relaysForThisRound = broadcastFunctions.splice(0, 10)
+      let relayStatus = {}
+      $('#broadcasting-progress').val(relays.length - broadcastFunctions.length)
+      await Promise.allSettled( relaysForThisRound.map((relay) => sendToRelay(relay, data, relayStatus)) )
+    }
+
+    updateRelayStatus({})
   }
