@@ -1,7 +1,8 @@
 // list of paid relays from:
 // https://thebitcoinmanual.com/articles/paid-nostr-relay/
 
-const relays = [
+
+const fixedRelays = [
   'wss://atlas.nostr.land', // paid relay	15000	npub12262qa4uhw7u8gdwlgmntqtv7aye8vdcmvszkqwgs0zchel6mz7s6cgrkj
   'wss://bitcoiner.social', // paid relay	1000	npub1dxs2pygtfxsah77yuncsmu3ttqr274qr5g5zva3c7t5s3jtgy2xszsn4st
   'wss://brb.io',
@@ -9,6 +10,7 @@ const relays = [
   'wss://expensive-relay.fiatjaf.com',
   'wss://freedom-relay.herokuapp.com',
   'wss://nos.lol',
+  'wss://a.nos.lol',
   'wss://nostr-2.zebedee.cloud',
   'wss://nostr-pub.wellorder.net',
   'wss://nostr-relay.alekberg.net',
@@ -43,4 +45,15 @@ const relays = [
   'wss://relay.snort.social',
   'wss://relayer.fiatjaf.com',
   'wss://rsslay.fiatjaf.com',
+  'wss://no.str.cr',
+  'wss://nostr.oxtr.dev',
+  'wss://nostr.mom',
+  'wss://relay.nostr.ch',
+  'wss://relay.nostr.band'
 ]
+
+var relays = []
+
+fetch("https://api.nostr.watch/v1/online")
+     .then(response => response.json())
+     .then(json => relays = fixedRelays.concat(json));

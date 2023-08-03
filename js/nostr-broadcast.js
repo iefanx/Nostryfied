@@ -16,6 +16,7 @@ const fetchAndBroadcast = async () => {
     fetching: 'Fetching from relays... ',
     download: `Downloading Backup file... ${checkMark}`,
   }
+  $('#checking-relays-header').text("Waiting for Relays: ")
   // parse pubkey ('npub' or hexa)
   const pubkey = parsePubkey($('#pubkey').val())
   if (!pubkey) return
@@ -25,18 +26,25 @@ const fetchAndBroadcast = async () => {
   $('#fetching-status').text(txt.fetching)
   // show and update fetching progress bar
   $('#fetching-progress').css('visibility', 'visible')
-  const fetchInterval = setInterval(() => {
-    // update fetching progress bar
-    const currValue = parseInt($('#fetching-progress').val())
-    $('#fetching-progress').val(currValue + 1)
-  }, 1000)
+  $('#fetching-progress').prop('max', relays.length)
+
+  $('#checking-relays-header-box').css('display', 'flex')
+  $('#checking-relays-box').css('display', 'flex')
+  $('#checking-relays-header').text("Waiting for Relays:")
+
   // get all events from relays
-  const filter = { authors: [pubkey] }
-  const data = await getEvents(filter)
+  const filters =[{ authors: [pubkey] }, { "#p": [pubkey] }] 
+  const data = (await getEvents(filters, pubkey)).sort((a, b) => b.created_at - a.created_at)
+  const latestKind3 = data.filter((it) => it.kind == 3 && it.pubkey === pubkey)[0]  
+  const myRelaySet = JSON.parse(latestKind3.content)
+  relays = Object.keys(myRelaySet).filter(url => myRelaySet[url].write).map(url => url)
+
+  $('#checking-relays-header-box').css('display', 'none')
+  $('#checking-relays-box').css('display', 'none')
+
   // inform user fetching is done
   $('#fetching-status').html(txt.fetching + checkMark)
-  clearInterval(fetchInterval)
-  $('#fetching-progress').val(20)
+  $('#fetching-progress').val(relays.length)
   // inform user that backup file (js format) is being downloaded
   $('#file-download').html(txt.download)
   downloadFile(data, 'nostr-backup.js')
@@ -44,16 +52,17 @@ const fetchAndBroadcast = async () => {
   $('#broadcasting-status').html(txt.broadcasting)
   // show and update broadcasting progress bar
   $('#broadcasting-progress').css('visibility', 'visible')
-  const broadcastInterval = setInterval(() => {
-    // update fetching progress bar
-    const currValue = parseInt($('#broadcasting-progress').val())
-    $('#broadcasting-progress').val(currValue + 1)
-  }, 1000)
+  $('#broadcasting-progress').prop('max', relays.length)
+  
+  $('#checking-relays-header-box').css('display', 'flex')
+  $('#checking-relays-box').css('display', 'flex')
+  $('#checking-relays-header').text("Broadcasting to Relays:")
+
   await broadcastEvents(data)
+
   // inform user that broadcasting is done
   $('#broadcasting-status').html(txt.broadcasting + checkMark)
-  clearInterval(broadcastInterval)
-  $('#broadcasting-progress').val(20)
+  $('#broadcasting-progress').val(relays.length)
   // re-enable broadcast button
   $('#fetch-and-broadcast').prop('disabled', false)
 }
