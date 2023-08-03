@@ -98,7 +98,7 @@ function hexToBytes(hex) {
             myTimeout = setTimeout(() => {
               ws.close()
               reject('timeout')
-            }, 5_000)
+            }, 10_000)
 
             const { id } = data
 
