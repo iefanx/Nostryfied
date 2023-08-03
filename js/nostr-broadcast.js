@@ -35,16 +35,17 @@ const fetchAndBroadcast = async () => {
   // get all events from relays
   const filters =[{ authors: [pubkey] }, { "#p": [pubkey] }] 
   const data = (await getEvents(filters, pubkey)).sort((a, b) => b.created_at - a.created_at)
+
+  // inform user fetching is done
+  $('#fetching-status').html(txt.fetching + checkMark)
+  $('#fetching-progress').val(relays.length)
+
   const latestKind3 = data.filter((it) => it.kind == 3 && it.pubkey === pubkey)[0]  
   const myRelaySet = JSON.parse(latestKind3.content)
   relays = Object.keys(myRelaySet).filter(url => myRelaySet[url].write).map(url => url)
 
   $('#checking-relays-header-box').css('display', 'none')
   $('#checking-relays-box').css('display', 'none')
-
-  // inform user fetching is done
-  $('#fetching-status').html(txt.fetching + checkMark)
-  $('#fetching-progress').val(relays.length)
   // inform user that backup file (js format) is being downloaded
   $('#file-download').html(txt.download)
   downloadFile(data, 'nostr-backup.js')
