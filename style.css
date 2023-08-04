@@ -6,7 +6,8 @@ color: #333;
 
 body {
   font-family: 'Red Hat Text', sans-serif;
-
+	 background-color: #ffffff;
+      color: #000000;
 }
 
 .container {
