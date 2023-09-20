@@ -1,0 +1,16 @@
+{
+  "name": "NostrSync",
+  "short_name": "NostrSync",
+  "description": "Fetch, backup and broadcast your Nostr events",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#202124",
+  "theme_color": "#202124",
+  "icons": [
+    {
+      "src": "icon.png", 
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}

@@ -2,10 +2,12 @@
 <html data-theme="light" lang="en">
   <head>
     <meta charset="utf-8" />
+    <link rel="manifest" href="/manifest.json" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!-- Primary Meta Tags -->
-    <title>Nostryfied</title>
-    <meta name="title" content="Nostr Backup Service by Nostryfied" />
+    <title>NostrSync</title>
+    <meta name="title" content="Nostr Backup Service by NostrSync" />
     <meta
       name="description"
       content="Fetch, backup and broadcast your Nostr events" />
@@ -28,7 +30,8 @@
     
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Nostryfied</title>
+    <title>NostrSync</title>
+    
     
   </head>
 
@@ -36,9 +39,15 @@
     
     <main class="container">
       <div class="header-space">
-        <h1>Nostryfied</h1>
+        <div class="header">
+          <div class="logo-container">
+            <img src="icon.png" alt="" class="logo">
+          </div>
+          <h1>NostrSync</h1>
+        </div>
+
       </div>
-      <h2><b>Nostryfied</b> offers an <b>Broadcast & Export Service</b> that allows you to <b>Download a 
+      <h2><b>NostrSync</b> offers an <b>Broadcast & Export Service</b> that allows you to <b>Download a 
         Copy of your Data</b> & when you use this service, all of your data will also be <b>Broadcasted to Major Relays</b> 
          on the network. <br><br>This design ensures that the data is <b> Widely Distributed</b> 
          and makes it more <b>Resistant to Censorship.</b>
@@ -47,7 +56,7 @@
         <form>
           <div>
             <form>
-              <div class="space-between-small">
+              <div class="space-between">
                 <p>
                   <input
                     type="text"
@@ -64,10 +73,10 @@
                   <b>OR</b>
                 </div>
               </div>
-              <div class="space-between">
+              <div class="space-between-small">
                 <div class="space-between">
                   <p>
-                    <input type="file" id="file-selector">
+                    <input type="file" class="file-selector" id="file-selector">
                   </p>
                   <script>
                     var fileName = ""
@@ -161,6 +170,19 @@
         
       </footer>
     </main>
+   <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(function (registration) {
+          console.log('Service Worker registered with scope:', registration.scope);
+        })
+        .catch(function (error) {
+          console.error('Service Worker registration failed:', error);
+        });
+    }
+  </script>
+
+
 
     <script src="https://bundle.run/buffer@6.0.3"></script>
     <script src="https://bundle.run/bech32@2.0.0"></script>
