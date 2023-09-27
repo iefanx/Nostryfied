@@ -68,7 +68,7 @@ a {
   background-color: var(--color-primary);
   color: var(--color-text);
   text-decoration: none;
-  text-transform: uppercase;
+ 
   border-radius: 0.3em;
   font-weight: 700;
   letter-spacing: .5px;
@@ -77,11 +77,11 @@ a {
 }
 
 button {
-  padding: 10px 10px;
-  background-color: #6790e2;
-  color: #292734;
+  padding: 8px 8px;
+  background-color: #0c53e2;
+  color: #f0ecec;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
   margin-bottom: 5px;
   font-weight: bold;
@@ -90,6 +90,28 @@ button {
 
 button:hover {
   background-color: #0c53e2;
+}
+
+
+
+.dataBase a {
+  display: inline-block;
+  padding: 5px 5px;
+  background-color: #434547;
+  color: #f0ecec;
+  text-decoration: none;
+  border: none;
+  font-size: x-small;
+  font-weight: 600;
+  border-radius: 25px;
+  margin-left: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.dataBase a:hover {
+  background-color: #0056b3;
+  /* Button background color on hover */
 }
 
 footer {
@@ -214,6 +236,54 @@ input[type="file"]::-webkit-file-upload-button:hover {
   background-color: #b0b0b3;
 }
 
+
+
+/* Style the toggle button container */
+.toggle-button {
+  display: inline-block;
+
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Hide the input checkbox */
+.toggle-button input[type="checkbox"] {
+  display: none;
+}
+
+/* Change the background color and text color when the toggle is checked */
+.toggle-button input[type="checkbox"]:checked+label {
+  background-color: #e82f0e;
+  color: white;
+}
+
+/* Style the label for the toggle switch */
+.toggle-button label {
+  display: inline-block;
+    padding: 5px 5px;
+    background-color: #434547;
+    /* Button background color */
+    color: #f0ecec;
+    text-decoration: none;
+    border: none;
+    font-size: x-small;
+    font-weight: 600;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+/* Style the slider knob */
+.toggle-button input[type="checkbox"]+label::before {
+
+  display: none;
+  
+}
+
+/* Move the slider knob to the right when checked */
+.toggle-button input[type="checkbox"]:checked+label::before {
+  transform: translateX(20px);
+}
 
 
 footer p {
